@@ -23,6 +23,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int clone(void(*fcn)(void*, void*), void* arg1, void* arg2, void* stack); //jps - added clone() to user.h
+int join(void** stack);	//jps - added join() to user.h
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -37,3 +39,8 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+int thread_create(void(*start_routine)(void*, void*), void* arg1, void* arg2); //jps - added thread_create in user.h
+int thread_join(void);		//jps - added thread_join in user.h
+void lock_acquire(lock_t*);	//jps - added lock_acquire in user.h
+void lock_release(lock_t*);	//jps - added lock_release in user.h
+void lock_init(lock_t*);	//jps - added lock_init in user.h

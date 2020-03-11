@@ -120,6 +120,8 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+int		clone(void(*fcn)(void*, void*), void*, void*, void*);	//jps - added clone call in defs.h
+int		join(void**);	//jps - added join call in defs.h
 
 // swtch.S
 void            swtch(struct context**, struct context*);
