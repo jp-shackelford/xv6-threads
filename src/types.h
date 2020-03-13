@@ -5,6 +5,6 @@ typedef uint pde_t;
 
 typedef struct	//jps - added lock_t typedef
 {
-  uint ticket;
-  uint turn;
+  int ticket;
+  int turn;
 } lock_t;

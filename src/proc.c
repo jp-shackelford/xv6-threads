@@ -236,18 +236,28 @@ clone(void(*fcn)(void*, void*), void* arg1, void* arg2, void* stack)
   }
 
   // Copy process state from proc.
-  if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
-    kfree(np->kstack);
-    np->kstack = 0;
-    np->state = UNUSED;
-    return -1;
-  }
+  np->pgdir = curproc->pgdir;
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
+  
+  // Set up thread stack (based off exec.c)
+  uint sp = (uint)stack + PGSIZE;
+  uint tstack[3];
+
+  tstack[0] = 0xFFFFFFFF; // fake return PC
+  tstack[1] = (uint)arg1;
+  tstack[2] = (uint)arg2;
+  sp = sp - (3)*4; // reduce stack pointer since we start with 3 items on the stack
+  if(copyout(np->pgdir, sp, tstack, (3)*4) < 0)
+    return -1;
+
+  np->tf->eip = (uint)fcn; 	// set instruction pointer to passed function
+  np->tf->esp = sp;		// set stack-pointer register
+  np->tstack = (char*)stack;	// set thread stack for this process
 
   for(i = 0; i < NOFILE; i++)
     if(curproc->ofile[i])
@@ -377,9 +387,10 @@ join(void** stack)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
-        kfree(p->kstack);
-        p->kstack = 0;
-        freevm(p->pgdir);
+        //kfree(p->kstack);
+        //p->kstack = 0;
+        //freevm(p->pgdir);
+	*stack = p->tstack;
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;

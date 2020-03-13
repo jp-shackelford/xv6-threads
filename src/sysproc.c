@@ -19,29 +19,21 @@ sys_clone(void)
 {
   //get and check inputs
   void (*fcn)(void*, void*);
-  void* arg1;
-  void* arg2;
-  void* stack;
+  int arg1;
+  int arg2;
+  int stack;
 
   if(argptr(0, (void*)&fcn, sizeof(void*)) < 0)
-  {
     return -1;
-  }
-  else if(argptr(1, (void*)&arg1, sizeof(void*)) < 0)
-  {
+  else if(argint(1, &arg1) < 0)
     return -1;
-  }
-  else if(argptr(2, (void*)&arg2, sizeof(void*)) < 0)
-  {
+  else if(argint(2, &arg2) < 0)
     return -1;
-  }
-  else if(argptr(3, (void*)&stack, sizeof(void*)) < 0)
-  {
+  else if(argint(3, &stack) < 0)
     return -1;
-  }
 
   //call clone() from proc.c
-  return clone(fcn, arg1, arg2, stack);
+  return clone((void*)fcn, (void*)arg1, (void*)arg2, (void*)stack);
 }
 
 int
@@ -62,15 +54,12 @@ int
 sys_join(void)
 {
   //get and check inputs
-  void* stack;
-
-  if(argptr(0, (char**)&stack, sizeof(void*)) < 0)
-  {
+  int stack;
+  if(argint(0, &stack) <0)
     return -1;
-  }
 	
   //call join() from proc.c
-  return join(&stack);
+  return join((void**)stack);
 }
 
 int

@@ -1,5 +1,16 @@
 // Routines to let C code use special x86 instructions.
 
+// jps - adding fetch_and_add atomic function
+static inline int 
+fetch_and_add(int* variable, int value)
+{
+  asm volatile("lock; xaddl %0, %1"
+    : "+r" (value), "+m" (*variable) // input+output
+    : // no input-only
+    : "memory");
+  return value;
+}
+
 static inline uchar
 inb(ushort port)
 {

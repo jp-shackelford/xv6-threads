@@ -39,6 +39,7 @@ struct proc {
   uint sz;                     // Size of process memory (bytes)
   pde_t* pgdir;                // Page table
   char *kstack;                // Bottom of kernel stack for this process
+  char *tstack;                // Bottom of thread stack for this process (jps)
   enum procstate state;        // Process state
   int pid;                     // Process ID
   struct proc *parent;         // Parent process
