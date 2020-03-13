@@ -114,6 +114,7 @@ int thread_create(void(*start_routine)(void*, void*), void* arg1, void* arg2)
   return clone(start_routine, arg1, arg2, stack);
 }
 
+//capture and free the thread stack and return its pid
 int thread_join()
 {
   void* stack;
@@ -122,6 +123,7 @@ int thread_join()
   return pid;
 }
 
+//acquire a lock when it is your turn
 void lock_acquire(lock_t* lock)
 {
   int turn = fetch_and_add(&lock->ticket, 1);

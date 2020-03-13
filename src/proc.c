@@ -378,7 +378,7 @@ join(void** stack)
   
   acquire(&ptable.lock);
   for(;;){
-    // Scan through table looking for exited children.
+    // Scan through table looking for exited threads.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->parent != curproc)
@@ -387,9 +387,6 @@ join(void** stack)
       if(p->state == ZOMBIE){
         // Found one.
         pid = p->pid;
-        //kfree(p->kstack);
-        //p->kstack = 0;
-        //freevm(p->pgdir);
 	*stack = p->tstack;
         p->pid = 0;
         p->parent = 0;
